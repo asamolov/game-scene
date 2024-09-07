@@ -3,7 +3,7 @@
 
 #include "game-scene.h"
 #include "sdlwindow.h"
-#include <SDL.h>
+#include "geometry.h"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -21,26 +21,20 @@ int main(int argc, char* argv[])
         //The window we'll be rendering to
         sdlwindow window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        //The surface contained by the window
-        SDL_Surface* screenSurface = NULL;
+        rect r = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
-        //Get window surface
-        screenSurface = window.GetWindowSurface();
-
-        //Fill the surface white
-        SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-
-        //Update the surface
-        window.UpdateWindowSurface();
-
-        //Hack to get window to stay up
+        // Main event loop
         SDL_Event e;
         bool quit = false;
         while (quit == false) {
             while (SDL_PollEvent(&e)) {
-                if (e.type == SDL_QUIT)
+                if (e.type == SDL_QUIT) {
                     quit = true;
+                }
             }
+            auto renderer = window.BeginRendering();
+            r.render(renderer);
+            window.EndRendering();
         }
     }
 
