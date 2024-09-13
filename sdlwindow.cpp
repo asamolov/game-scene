@@ -18,6 +18,11 @@ sdlwindow::sdlwindow(const std::string& title, int width, int height)
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
+// TODO: add lookup of ttf file using this code: https://stackoverflow.com/questions/11387564/get-a-font-filepath-from-name-and-style-in-c-windows
+// C:\Windows\Fonts\arial.ttf
+
+
+
 SDL_Surface* sdlwindow::GetWindowSurface()
 {
 	auto surface = SDL_GetWindowSurface(window);
@@ -56,4 +61,31 @@ sdlwindow::~sdlwindow()
 		SDL_DestroyWindow(window);
 		window = nullptr;
 	}
+}
+
+fpscounter::fpscounter(TTF_Font* font, int x, int y) : label(font), time(SDL_GetTicks()), frames(0)
+{
+	label.setPos(x, y);
+}
+
+void fpscounter::Render(SDL_Renderer* renderer)
+{
+	frames++;
+	if (frames >= fps_frames_avg) {
+		auto now = SDL_GetTicks();
+		auto fps = frames / (now - time) / 1000.f;
+		if (fps > 2000000) {
+			fps = 0;
+		}
+		auto fpsLabel = fmt::format("FPS: {:3.2f}", fps);
+		label.text = fpsLabel;
+		Reset();
+	}
+	label.render(renderer);
+}
+
+void fpscounter::Reset()
+{
+	time = SDL_GetTicks();
+	frames = 0;
 }

@@ -15,11 +15,12 @@ project ("game-scene")
 add_executable (game-scene 
     "game-scene.cpp" 
     "game-scene.h"
- "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp")
+ "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp")
 
 find_package(SDL2 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
+find_package(SDL2_ttf CONFIG REQUIRED)
 
 target_link_libraries(game-scene
     PRIVATE
@@ -27,6 +28,7 @@ target_link_libraries(game-scene
     $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
 )
 
 
