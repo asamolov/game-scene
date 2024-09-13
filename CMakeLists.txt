@@ -15,7 +15,7 @@ project ("game-scene")
 add_executable (game-scene 
     "game-scene.cpp" 
     "game-scene.h"
- "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp")
+ "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp" "sdlapp.h" "sdlapp.cpp"  "sdlwrappers.h")
 
 find_package(SDL2 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)

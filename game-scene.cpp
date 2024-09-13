@@ -2,24 +2,15 @@
 //
 
 #include "game-scene.h"
-#include "sdlwindow.h"
-#include "geometry.h"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 int main(int argc, char* argv[])
 {
-    //Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-
-    {
-        //The window we'll be rendering to
-        sdlwindow window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT);
+    try {
+        sdlapp app;
+        sdlwindow window(app, "SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         rect r = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
@@ -37,8 +28,8 @@ int main(int argc, char* argv[])
             window.EndRendering();
         }
     }
-
-    //Quit SDL subsystems
-    SDL_Quit();
+    catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
 	return 0;
 }
