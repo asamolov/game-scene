@@ -8,7 +8,10 @@ private:
 	TextureWrapper _t;
 	SDL_Rect _rect;
 public:
-	sdltexture(TextureWrapper t, int w, int h);
+	sdltexture(sdltexture&& other) noexcept;
+	sdltexture& operator=(sdltexture&& other) noexcept;
+	sdltexture(TextureWrapper t, int w, int h) noexcept;
 	void setPos(int x, int y);
+	void setColorMod(Uint8 r, Uint8 g, Uint8 b);
 	void render(SDL_Renderer* renderer);
 };

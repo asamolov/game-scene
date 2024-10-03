@@ -4,7 +4,7 @@
 #include "sdlapp.h"
 #include "sdltexture.h"
 
-constexpr int fps_frames_avg = 100;
+constexpr int fps_frames_avg = 30;
 constexpr int fps_font_size = 24;
 constexpr const char* fps_font_path = "C:\\Windows\\Fonts\\arial.ttf";
 
