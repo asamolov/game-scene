@@ -7,6 +7,7 @@ class sdltexture {
 private:
 	TextureWrapper _t;
 	SDL_Rect _rect;
+	SDL_Rect _clip;
 public:
 	sdltexture(sdltexture&& other) noexcept;
 	sdltexture& operator=(sdltexture&& other) noexcept;

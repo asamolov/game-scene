@@ -1,12 +1,16 @@
 #include "sdltexture.h"
 
-sdltexture::sdltexture(TextureWrapper t, int w, int h) noexcept : _t(std::move(t)), _rect({ 0, 0, 0, 0 })
+sdltexture::sdltexture(TextureWrapper t, int w, int h) noexcept : 
+	_t(std::move(t)), 
+	_rect({ 0, 0, w, h }), 
+	_clip({ 0, 0, w, h })
 {
-	_rect.w = w;
-	_rect.h = h;
 }
 
-sdltexture::sdltexture(sdltexture&& other) noexcept : _t(std::move(other._t)), _rect(std::move(other._rect))
+sdltexture::sdltexture(sdltexture&& other) noexcept : 
+	_t(std::move(other._t)), 
+	_rect(std::move(other._rect)), 
+	_clip(std::move(other._clip))
 {
 }
 
@@ -15,13 +19,14 @@ sdltexture& sdltexture::operator=(sdltexture&& other) noexcept
 	if (this != &other) {
 		_t = std::move(other._t);
 		_rect = std::move(other._rect);
+		_clip = std::move(other._clip);
 	}
 	return *this;
 }
 
 void sdltexture::render(SDL_Renderer* renderer)
 {
-	SDL_RenderCopy(renderer, _t.get(), NULL, &_rect);
+	SDL_RenderCopy(renderer, _t.get(), &_clip, &_rect);
 }
 
 void sdltexture::setPos(int x, int y)
