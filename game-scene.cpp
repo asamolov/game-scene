@@ -11,6 +11,8 @@ int main(int argc, char* argv[])
     try {
         sdlapp app;
         sdlwindow window(app, "SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT);
+        auto t = window.LoadTexture("textures\\circle.png");
+        t.setPos(200, 200);
 
         rect r = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
@@ -25,6 +27,7 @@ int main(int argc, char* argv[])
             }
             auto renderer = window.BeginRendering();
             r.render(renderer);
+            t.render(renderer);
             window.EndRendering();
         }
     }

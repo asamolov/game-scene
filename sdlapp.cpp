@@ -1,19 +1,29 @@
 #include "sdlapp.h"
 
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <stdexcept>
 #include <fmt/core.h>
+#include <iostream>
+#include <filesystem>
 
 sdlapp::sdlapp() {
-    //Initialize SDL
+    std::cout << "Current path: " << std::filesystem::current_path() << std::endl;
+    // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         throw std::runtime_error(fmt::format("SDL could not initialize! SDL_Error: {}", SDL_GetError()));
     }
-    //Initialize SDL_ttf
+    // Initialize SDL_ttf
     if (TTF_Init() == -1)
     {
         throw std::runtime_error(fmt::format("SDL_ttf could not initialize! SDL_ttf Error: {}", TTF_GetError()));
+    }
+    // Initialize SDL_image
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags))
+    {
+        throw std::runtime_error(fmt::format("SDL_img could not initialize! SDL_img Error: {}", IMG_GetError()));
     }
 }
 
@@ -34,4 +44,5 @@ sdlapp::~sdlapp()
     //Quit SDL subsystems
     TTF_Quit();
     SDL_Quit();
+    IMG_Quit();
 }

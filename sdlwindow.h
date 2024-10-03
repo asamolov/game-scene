@@ -2,6 +2,7 @@
 #include <string>
 #include "label.h"
 #include "sdlapp.h"
+#include "sdltexture.h"
 
 constexpr int fps_frames_avg = 100;
 constexpr int fps_font_size = 24;
@@ -28,6 +29,7 @@ private:
 	fpscounter counter;
 public:
 	sdlwindow(const sdlapp& app, const std::string& title, int width, int height);
+	sdltexture LoadTexture(const std::string& path);
 	SDL_Surface* GetWindowSurface();
 	SDL_Renderer* BeginRendering();
 	void EndRendering();

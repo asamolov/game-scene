@@ -1,6 +1,7 @@
 #include "sdlwindow.h"
 
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <stdexcept>
 #include <fmt/core.h>
 
@@ -18,6 +19,23 @@ sdlwindow::sdlwindow(const sdlapp& _app, const std::string& title, int width, in
 		throw std::runtime_error(fmt::format("Renderer for window {} could not be created! SDL_Error: {}", fmt::ptr(window), SDL_GetError()));
 	}
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+}
+
+sdltexture sdlwindow::LoadTexture(const std::string& path)
+{
+	auto pt = IMG_LoadTexture(renderer, path.c_str());
+	if (pt == nullptr)
+	{
+		throw std::runtime_error(fmt::format("Failed to load image {}! IMG_Error: {}", path, IMG_GetError()));
+	}
+	// detecting size
+	int w, h;
+	if (SDL_QueryTexture(pt, NULL, NULL, &w, &h) != 0)
+	{
+		throw std::runtime_error(fmt::format("Failed to query texture details! SDL_Error: {}", SDL_GetError()));
+	}
+
+	return sdltexture(TextureWrapper(pt), w, h);
 }
 
 SDL_Surface* sdlwindow::GetWindowSurface()

@@ -15,7 +15,7 @@ project ("game-scene")
 add_executable (game-scene 
     "game-scene.cpp" 
     "game-scene.h"
- "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp" "sdlapp.h" "sdlapp.cpp"  "sdlwrappers.h")
+ "sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp" "sdlapp.h" "sdlapp.cpp"  "sdlwrappers.h" "sdltexture.h" "sdltexture.cpp")
 
 find_package(SDL2 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -33,5 +33,7 @@ target_link_libraries(game-scene
 
 
 set_property(TARGET game-scene PROPERTY CXX_STANDARD 20)
+
+file(COPY "textures" DESTINATION .)
 
 # TODO: Add tests and install targets if needed.
