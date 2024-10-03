@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 {
     try {
         sdlapp app;
-        sdlwindow window(app, "SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT);
+        sdlwindow window(app, "SDL Scene", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         std::vector<sdltexture> textures;
         auto red = window.LoadTexture("textures\\circle.png");
@@ -26,9 +26,23 @@ int main(int argc, char* argv[])
         textures.push_back(std::move(red));
         textures.push_back(std::move(green));
         textures.push_back(std::move(blue));
-        //textures.emplace_back(std::move(red), std::move(green), std::move(blue));
 
         rect r = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+
+        int x = 0;
+        int y = 0;
+        int n = 1;
+        const int step = 5;
+        std::vector<SDL_Rect> circles;
+        do {
+            circles.emplace_back(x, y, n, n);
+            x += n;
+            if (x > SCREEN_WIDTH) {
+                x = 0;
+                y += n;
+            }
+            n += step;
+        } while (y < SCREEN_WIDTH);
 
         // Main event loop
         SDL_Event e;
@@ -40,6 +54,11 @@ int main(int argc, char* argv[])
                 }
             }
             auto renderer = window.BeginRendering();
+            int idx = 0;
+            for (auto& c : circles) {
+                textures[idx % textures.size()].render(renderer, c);
+                idx++;
+            }
             r.render(renderer);
             for (auto& t : textures) {
                 t.render(renderer);

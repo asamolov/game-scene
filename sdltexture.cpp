@@ -29,10 +29,21 @@ void sdltexture::render(SDL_Renderer* renderer)
 	SDL_RenderCopy(renderer, _t.get(), &_clip, &_rect);
 }
 
+void sdltexture::render(SDL_Renderer* renderer, const SDL_Rect& rect)
+{
+	SDL_RenderCopy(renderer, _t.get(), &_clip, &rect);
+}
+
 void sdltexture::setPos(int x, int y)
 {
 	_rect.x = x;
 	_rect.y = y;
+}
+
+void sdltexture::setSize(int w, int h)
+{
+	_rect.w = w;
+	_rect.h = h;
 }
 
 void sdltexture::setColorMod(Uint8 r, Uint8 g, Uint8 b)
