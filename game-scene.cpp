@@ -26,6 +26,8 @@ int main(int argc, char* argv[])
         textures.push_back(std::move(red));
         textures.push_back(std::move(green));
         textures.push_back(std::move(blue));
+        auto circle = window.LoadTexture("textures\\circle.png");
+        std::vector<SDL_Color> colors = { {255, 0, 0, 0}, {0, 255, 0, 0}, {0, 0, 255, 0} };
 
         rect r = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
@@ -56,7 +58,9 @@ int main(int argc, char* argv[])
             auto renderer = window.BeginRendering();
             int idx = 0;
             for (auto& c : circles) {
-                textures[idx % textures.size()].render(renderer, c);
+                auto& color = colors[idx % colors.size()];
+                circle.setColorMod(color);
+                circle.render(renderer, c);
                 idx++;
             }
             r.render(renderer);

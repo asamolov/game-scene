@@ -50,3 +50,8 @@ void sdltexture::setColorMod(Uint8 r, Uint8 g, Uint8 b)
 {
 	SDL_SetTextureColorMod(_t.get(), r, g, b);
 }
+
+void sdltexture::setColorMod(const SDL_Color& color)
+{
+	setColorMod(color.r, color.g, color.b);
+}
