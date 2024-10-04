@@ -34,6 +34,7 @@ sdltexture sdlwindow::LoadTexture(const std::string& path)
 	{
 		throw std::runtime_error(fmt::format("Failed to query texture details! SDL_Error: {}", SDL_GetError()));
 	}
+	SDL_SetTextureScaleMode(pt, SDL_ScaleModeLinear);
 
 	return sdltexture(TextureWrapper(pt), w, h);
 }
