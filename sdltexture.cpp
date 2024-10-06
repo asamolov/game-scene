@@ -34,6 +34,11 @@ void sdltexture::render(SDL_Renderer* renderer, const SDL_Rect& rect)
 	SDL_RenderCopy(renderer, _t.get(), &_clip, &rect);
 }
 
+void sdltexture::render(SDL_Renderer* renderer, const SDL_FRect& rect)
+{
+	SDL_RenderCopyF(renderer, _t.get(), &_clip, &rect);
+}
+
 void sdltexture::setPos(int x, int y)
 {
 	_rect.x = x;

@@ -17,5 +17,6 @@ public:
 	void setColorMod(Uint8 r, Uint8 g, Uint8 b);
 	void setColorMod(const SDL_Color& color);
 	void render(SDL_Renderer* renderer);
-	void render(SDL_Renderer* renderer, const SDL_Rect & rect);
+	void render(SDL_Renderer* renderer, const SDL_Rect& rect);
+	void render(SDL_Renderer* renderer, const SDL_FRect& rect);
 };

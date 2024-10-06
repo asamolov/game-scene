@@ -6,8 +6,10 @@
 #include <fmt/core.h>
 #include <iostream>
 #include <filesystem>
+#include <cstdlib>
 
 sdlapp::sdlapp() {
+    std::srand(std::time(nullptr)); // use current time as seed for random generator
     std::cout << "Current path: " << std::filesystem::current_path() << std::endl;
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
