@@ -28,7 +28,7 @@ private:
 	TTF_Font* font = nullptr; // TODO: move fonts management to app
 	fpscounter counter;
 public:
-	sdlwindow(const sdlapp& app, const std::string& title, int width, int height);
+	sdlwindow(const sdlapp& _app, const std::string& title, int width, int height, bool vsync = true);
 	sdltexture LoadTexture(const std::string& path);
 	SDL_Surface* GetWindowSurface();
 	SDL_Renderer* BeginRendering();

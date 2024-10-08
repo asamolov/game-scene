@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <fmt/core.h>
 
-sdlwindow::sdlwindow(const sdlapp& _app, const std::string& title, int width, int height) : 
+sdlwindow::sdlwindow(const sdlapp& _app, const std::string& title, int width, int height, bool vsync) :
 	app(_app), font(_app.loadFont(fps_font_path, fps_font_size)), counter(font, 0, 0)
 {
 	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
@@ -13,7 +13,11 @@ sdlwindow::sdlwindow(const sdlapp& _app, const std::string& title, int width, in
 	{
 		throw std::runtime_error(fmt::format("Window could not be created! SDL_Error: {}", SDL_GetError()));
 	}
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC); // | SDL_RENDERER_PRESENTVSYNC
+	Uint32 flags = SDL_RENDERER_ACCELERATED;
+	if (vsync) {
+		flags |= SDL_RENDERER_PRESENTVSYNC;
+	}
+	renderer = SDL_CreateRenderer(window, -1, flags); // | SDL_RENDERER_PRESENTVSYNC
 	if (renderer == nullptr)
 	{
 		throw std::runtime_error(fmt::format("Renderer for window {} could not be created! SDL_Error: {}", fmt::ptr(window), SDL_GetError()));
