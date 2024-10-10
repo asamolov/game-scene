@@ -9,6 +9,7 @@ private:
 	float vx, vy;
 	float radius;
 	float mass;
+	size_t _collisions;
 	SDL_Color color;
 public:
 	particle();
@@ -21,4 +22,5 @@ public:
 	void bounceOff(const particle& that);
 	void bounceOffVerticalWall();
 	void bounceOffHorizontalWall();
+	size_t collisions() const;
 };

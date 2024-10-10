@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
         sdlapp app;
         sdlwindow window(app, "Collision System", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        const int n = 1000;
+        const int n = 100;
 
         collision_system cs(window.LoadTexture("textures\\circle.png"));
         for (auto i = 0; i < n; i++) {
@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
 void collision_system::predict(size_t idx)
 {
     auto& p = particles.at(idx);
-    pq.emplace(HorizontalWall, now + p.timeToHitHorizontalWall(), idx);
-    pq.emplace(VerticalWall, now + p.timeToHitVerticalWall(), idx);
+    pq.emplace(particles, HorizontalWall, now + p.timeToHitHorizontalWall(), idx);
+    pq.emplace(particles, VerticalWall, now + p.timeToHitVerticalWall(), idx);
 }
 
 collision_system::collision_system(sdltexture&& circle): _circle(std::move(circle)), now(0.f)
@@ -86,6 +86,10 @@ void collision_system::move(float dt)
             break;
         }
         pq.pop();
+        // discarding invalid events (already bounced)
+        if (!e.is_valid()) {
+            continue;
+        }
         // moving all particles
         for (auto& p : particles) {
             p.move(time_to_event);
@@ -98,15 +102,14 @@ void collision_system::move(float dt)
         switch (e.kind) {
         case HorizontalWall:
             p.bounceOffHorizontalWall();
-            pq.emplace(HorizontalWall, now + p.timeToHitHorizontalWall(), e.idx_a);
             break;
         case VerticalWall:
             p.bounceOffVerticalWall();
-            pq.emplace(VerticalWall, now + p.timeToHitVerticalWall(), e.idx_a);
             break;
         case OtherParticle:
             break;
         }
+        predict(e.idx_a);
     }
 }
 

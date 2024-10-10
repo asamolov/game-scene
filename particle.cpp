@@ -8,12 +8,14 @@ float randf()
 	return std::rand() / static_cast<float>(RAND_MAX);
 }
 
+const float speed_factor = 0.3f;
+
 particle::particle()
 {
 	x = randf();
 	y = randf();
-	vx = randf() / 10.f - 0.05f;
-	vy = randf() / 10.f - 0.05f;
+	vx = (randf() - 0.5f) * speed_factor;
+	vy = (randf() - 0.5f) * speed_factor;
 	radius = 0.01f;
 	mass = 1.f;
 	color = { 0,0,0,0 };
@@ -75,10 +77,17 @@ void particle::bounceOff(const particle& that)
 void particle::bounceOffVerticalWall()
 {
 	vx = -vx;
+	_collisions++;
 }
 
 void particle::bounceOffHorizontalWall()
 {
 	vy = -vy;
+	_collisions++;
+}
+
+size_t particle::collisions() const
+{
+	return _collisions;
 }
 

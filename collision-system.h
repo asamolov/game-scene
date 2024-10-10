@@ -12,13 +12,26 @@ enum collision_kind {
 struct collision_event {
 	float time;
 	collision_kind kind;
+	std::reference_wrapper<const std::vector<particle>> particles;
 	size_t idx_a, idx_b;
-	collision_event(collision_kind kind, float time, size_t idx_a) : time(time), kind(kind), idx_a(idx_a), idx_b(idx_a) {
-
+	size_t collisions_a, collisions_b;
+	collision_event(const std::vector<particle>& particles, collision_kind kind, float time, size_t idx_a) : 
+		particles(std::cref(particles)),
+		time(time), 
+		kind(kind), 
+		idx_a(idx_a), 
+		idx_b(idx_a) {
+		collisions_a = particles.at(idx_a).collisions();
+		collisions_b = particles.at(idx_b).collisions();
 	}
 
 	friend bool operator<(const collision_event& lhs, const collision_event& rhs) {
 		return lhs.time > rhs.time; // reverse comparison, so priority_queue returns event with smallest time on top
+	}
+
+	bool is_valid() const {
+		return collisions_a == particles.get().at(idx_a).collisions()
+			&& collisions_b == particles.get().at(idx_b).collisions();
 	}
 };
 
