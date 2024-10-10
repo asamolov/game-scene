@@ -10,17 +10,23 @@ enum collision_kind {
 };
 
 struct collision_event {
-	float time;
+	double time;
 	collision_kind kind;
 	std::reference_wrapper<const std::vector<particle>> particles;
 	size_t idx_a, idx_b;
 	size_t collisions_a, collisions_b;
-	collision_event(const std::vector<particle>& particles, collision_kind kind, float time, size_t idx_a) : 
+
+	collision_event(const std::vector<particle>& particles, collision_kind kind, double time, size_t idx_a) :
+		collision_event(particles, kind, time, idx_a, idx_a)
+	{
+	}
+
+	collision_event(const std::vector<particle>& particles, collision_kind kind, double time, size_t idx_a, size_t idx_b) :
 		particles(std::cref(particles)),
-		time(time), 
-		kind(kind), 
-		idx_a(idx_a), 
-		idx_b(idx_a) {
+		time(time),
+		kind(kind),
+		idx_a(idx_a),
+		idx_b(idx_b) {
 		collisions_a = particles.at(idx_a).collisions();
 		collisions_b = particles.at(idx_b).collisions();
 	}
@@ -41,12 +47,14 @@ private:
 	std::priority_queue<collision_event> pq;
 	std::vector<particle> particles;
 	sdltexture _circle;
-	float now = 0.f;
+	double now = 0.f;
 	void predict(size_t idx);
 public:
 	collision_system(sdltexture&& circle);
+	void predict_all();
 	void add_particle(particle&& p);
 	void move(Uint32 dt);
-	void move(float dt);
+	void move(double dt);
 	void render(SDL_Renderer* renderer);
+	double energy() const;
 };
