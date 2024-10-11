@@ -2,6 +2,7 @@
 #include "constants.h"
 #include <cstdlib>
 #include <cmath>
+#include <algorithm>
 
 // random double between 0 and 1
 double randf()
@@ -9,7 +10,7 @@ double randf()
 	return std::rand() / static_cast<double>(RAND_MAX);
 }
 
-const double speed_factor = 0.3f;
+const double speed_factor = 0.5f;
 
 particle::particle()
 {
@@ -38,6 +39,33 @@ void particle::move(double seconds)
 void particle::render(SDL_Renderer* renderer, sdltexture& texture)
 {
 	texture.setColorMod(color);
+	SDL_FRect rect = {
+		(x - radius) * SCREEN_WIDTH,
+		(y - radius) * SCREEN_HEIGHT,
+		radius * 2 * SCREEN_WIDTH,
+		radius * 2 * SCREEN_WIDTH
+	};
+	texture.render(renderer, rect);
+}
+
+const SDL_Color minC = { 0, 0, 255, 0 };
+const double minV = 0;
+const SDL_Color maxC = { 255, 0, 0, 0 };
+const double maxV = speed_factor;
+
+SDL_Color particle::color_of_speed() const {
+	double ratio = (std::clamp(std::sqrt(vx * vx + vy * vy), minV, maxV) - minV) / (maxV - minV);
+	return {
+		static_cast<Uint8> (minC.r * (1 - ratio) + maxC.r * ratio),
+		static_cast<Uint8> (minC.g * (1 - ratio) + maxC.g * ratio),
+		static_cast<Uint8> (minC.b * (1 - ratio) + maxC.b * ratio),
+		static_cast<Uint8> (minC.a * (1 - ratio) + maxC.a * ratio)
+	};
+}
+
+void particle::render_with_gradient(SDL_Renderer* renderer, sdltexture& texture)
+{
+	texture.setColorMod(color_of_speed());
 	SDL_FRect rect = {
 		(x - radius) * SCREEN_WIDTH,
 		(y - radius) * SCREEN_HEIGHT,

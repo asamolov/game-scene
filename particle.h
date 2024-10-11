@@ -11,11 +11,13 @@ private:
 	double mass;
 	size_t _collisions;
 	SDL_Color color;
+	SDL_Color color_of_speed() const;
 public:
 	particle();
 	void move(Uint32 dt);
 	void move(double seconds);
 	void render(SDL_Renderer* renderer, sdltexture& texture);
+	void render_with_gradient(SDL_Renderer* renderer, sdltexture& texture);
 	double timeToHit(const particle& that) const;
 	double timeToHitVerticalWall() const;
 	double timeToHitHorizontalWall() const;

@@ -150,7 +150,7 @@ void collision_system::move(double dt)
 void collision_system::render(SDL_Renderer* renderer)
 {
     for (auto& p : particles) {
-        p.render(renderer, _circle);
+        p.render_with_gradient(renderer, _circle);
     }
 }
 
