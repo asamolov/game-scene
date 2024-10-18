@@ -51,6 +51,8 @@ private:
 	void predict(size_t idx);
 public:
 	collision_system(sdltexture&& circle);
+	void generate(const unsigned int n);
+	void load(const std::filesystem::path& filename);
 	void predict_all();
 	void add_particle(particle&& p);
 	void move(Uint32 dt);

@@ -20,8 +20,13 @@ particle::particle()
 	vy = (randf() - 0.5f) * speed_factor;
 	radius = 0.01f;
 	mass = 1.f;
-	color = { 0,0,0,0 };
+	color = { 0,0,0,255 };
 	_collisions = 0;
+}
+
+particle::particle(double x, double y, double vx, double vy, double radius, double mass, Uint8 r, Uint8 g, Uint8 b):
+	x(x), y(y), vx(vx), vy(vy), radius(radius), mass(mass), color({r, g, b, 0}), _collisions(0)
+{
 }
 
 void particle::move(Uint32 dt)
@@ -38,7 +43,12 @@ void particle::move(double seconds)
 
 void particle::render(SDL_Renderer* renderer, sdltexture& texture)
 {
-	texture.setColorMod(color);
+	// if alpha is 255 - use color of speed
+	if (color.a == 255) {
+		texture.setColorMod(color_of_speed());
+	} else {
+		texture.setColorMod(color);
+	}
 	SDL_FRect rect = {
 		(x - radius) * SCREEN_WIDTH,
 		(y - radius) * SCREEN_HEIGHT,
@@ -61,18 +71,6 @@ SDL_Color particle::color_of_speed() const {
 		static_cast<Uint8> (minC.b * (1 - ratio) + maxC.b * ratio),
 		static_cast<Uint8> (minC.a * (1 - ratio) + maxC.a * ratio)
 	};
-}
-
-void particle::render_with_gradient(SDL_Renderer* renderer, sdltexture& texture)
-{
-	texture.setColorMod(color_of_speed());
-	SDL_FRect rect = {
-		(x - radius) * SCREEN_WIDTH,
-		(y - radius) * SCREEN_HEIGHT,
-		radius * 2 * SCREEN_WIDTH,
-		radius * 2 * SCREEN_WIDTH
-	};
-	texture.render(renderer, rect);
 }
 
 double particle::timeToHit(const particle& that) const
@@ -103,9 +101,10 @@ double particle::timeToHitVerticalWall() const
 {
 	if (vx > 0) {
 		return (1.0f - x - radius) / vx;
-	}
-	else {
+	} else if (vx < 0) {
 		return (radius - x) / vx;
+	} else {
+		return INFINITY;
 	}
 }
 
@@ -113,9 +112,10 @@ double particle::timeToHitHorizontalWall() const
 {
 	if (vy > 0) {
 		return (1.0f - y - radius) / vy;
-	}
-	else {
+	} else if (vy < 0) {
 		return (radius - y) / vy;
+	} else {
+		return INFINITY;
 	}
 }
 
@@ -140,10 +140,6 @@ void particle::bounceOff(particle& that)
 	vy += fy / mass;
 	that.vx -= fx / that.mass;
 	that.vy -= fy / that.mass;
-
-	if (std::abs(vx) > 1 || std::abs(vy) > 1 || std::abs(that.vx) > 1 || std::abs(that.vy) > 1) {
-		__debugbreak();
-	}
 
 	// update collision counts
 	_collisions++;

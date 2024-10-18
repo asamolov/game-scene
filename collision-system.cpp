@@ -19,11 +19,14 @@ int main(int argc, char* argv[])
     argv = cli.ensure_utf8(argv);
 
     unsigned int n = 100;
-    auto n_option = cli.add_option("-n,--number", n, "number of random particles to generate")->capture_default_str();
+    auto n_option = cli.add_option("-n,--number", n, "number of random particles to generate")
+        ->check(CLI::Range(1U, 10000U))
+        ->capture_default_str();
 
     std::filesystem::path filename;
-    auto f_option = cli.add_option("-f,--file", filename, "file with particle system to load");
-    f_option->excludes(n_option)->check(CLI::ExistingFile);
+    cli.add_option("-f,--file", filename, "file with particle system to load")
+        ->excludes(n_option)
+        ->check(CLI::ExistingFile);
 
     CLI11_PARSE(cli, argc, argv);
     
@@ -32,19 +35,13 @@ int main(int argc, char* argv[])
         sdlwindow window(app, "Collision System", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         collision_system cs(window.LoadTexture("textures\\circle.png"));
-
         if (filename.empty()) {
             std::cout << fmt::format("Generating {} random particles", n) << std::endl;
-            for (auto i = 0; i < n; i++) {
-                cs.add_particle(particle());
-            }
-        }
-        else {
+            cs.generate(n);
+        } else {
             std::cout << fmt::format("Parsing particles from file {}...", filename) << std::endl;
-            // TODO: implement parsing from file
-            throw std::runtime_error(fmt::format("Unable to parse particles from file {}! Cause: {}", filename, "not implemented"));
+            cs.load(filename);
         }
-        cs.predict_all();
 
         // Main event loop
         SDL_Event e;
@@ -64,7 +61,6 @@ int main(int argc, char* argv[])
             auto renderer = window.BeginRendering();
             cs.render(renderer);
             //std::cout << fmt::format("energy: {}", cs.energy()) << std::endl;
-            ///
             window.EndRendering();
         }
     }
@@ -98,6 +94,48 @@ void collision_system::predict(size_t idx)
 
 collision_system::collision_system(sdltexture&& circle): _circle(std::move(circle)), now(0.f)
 {
+}
+
+void collision_system::generate(const unsigned int n)
+{
+    particles.clear();
+    particles.resize(n); // generates N particles using default ctor
+    predict_all();
+}
+
+void collision_system::load(const std::filesystem::path& filename)
+{
+    std::ifstream infile(filename);
+
+    int size;
+    if (!(infile >> size)) {
+        throw std::runtime_error(fmt::format("Unable to parse particles from file {}! Cause: {}", filename, "Unable to read number of particles in file"));
+    }
+    std::vector<particle> loaded_particles;
+    loaded_particles.reserve(size);
+
+    const double speed_factor = 20;
+    double x, y;
+    double vx, vy;
+    double radius;
+    double mass;
+    unsigned short int r, g, b;
+	while (infile >> x >> y >> vx >> vy >> radius >> mass >> r >> g >> b) {
+        if (r > 255 || g > 255 || b > 255) {
+            throw std::runtime_error(fmt::format("Unable to parse particles from file {}! Cause: incorrect rgb values: {} {} {}", filename, r, g, b));
+        }
+        loaded_particles.emplace_back(
+            x, y, vx*speed_factor, vy*speed_factor, radius, mass, 
+            static_cast<Uint8>(r), 
+            static_cast<Uint8>(g),
+            static_cast<Uint8>(b)
+        );
+    }
+    if (loaded_particles.size() != size) {
+        throw std::runtime_error(fmt::format("Unable to parse particles from file {}! Cause: got {}, expected {}", filename, loaded_particles.size(), size));
+    }
+    particles.swap(loaded_particles);
+    predict_all();
 }
 
 void collision_system::predict_all()
@@ -172,7 +210,7 @@ void collision_system::move(double dt)
 void collision_system::render(SDL_Renderer* renderer)
 {
     for (auto& p : particles) {
-        p.render_with_gradient(renderer, _circle);
+        p.render(renderer, _circle);
     }
 }
 

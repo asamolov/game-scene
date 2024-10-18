@@ -14,10 +14,10 @@ private:
 	SDL_Color color_of_speed() const;
 public:
 	particle();
+	particle(double x, double y, double vx, double vy, double radius, double mass, Uint8 r, Uint8 g, Uint8 b);
 	void move(Uint32 dt);
 	void move(double seconds);
 	void render(SDL_Renderer* renderer, sdltexture& texture);
-	void render_with_gradient(SDL_Renderer* renderer, sdltexture& texture);
 	double timeToHit(const particle& that) const;
 	double timeToHitVerticalWall() const;
 	double timeToHitHorizontalWall() const;
