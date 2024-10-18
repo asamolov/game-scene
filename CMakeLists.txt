@@ -12,7 +12,7 @@ endif()
 project ("game-scene")
 
 set(SHARED_SOURCES 
-"sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp" "sdlapp.h" "sdlapp.cpp"  "sdlwrappers.h" "sdltexture.h" "sdltexture.cpp" "constants.h")
+"sdlwindow.cpp" "sdlwindow.h" "geometry.h" "geometry.cpp" "label.h" "label.cpp" "sdlapp.h" "sdlapp.cpp"  "sdlwrappers.h" "sdltexture.h" "sdltexture.cpp" "constants.h" "CLI11.hpp")
 
 # demo
 add_executable (game-scene 

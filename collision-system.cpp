@@ -2,25 +2,47 @@
  * Collision system visualisation, using approach from Sedgewick's algorithm book/course.
  */
 
+#include "CLI11.hpp"
 #include "game-scene.h"
 #include "collision-system.h"
 #include <vector>
 #include "particle.h"
 #include "constants.h"
 #include "label.h"
-#include <fmt/core.h>
+#include <filesystem>
+#include <fmt/format.h>
+#include <fmt/std.h>
 
 int main(int argc, char* argv[])
 {
+    CLI::App cli{ "Collision System" };
+    argv = cli.ensure_utf8(argv);
+
+    unsigned int n = 100;
+    auto n_option = cli.add_option("-n,--number", n, "number of random particles to generate")->capture_default_str();
+
+    std::filesystem::path filename;
+    auto f_option = cli.add_option("-f,--file", filename, "file with particle system to load");
+    f_option->excludes(n_option)->check(CLI::ExistingFile);
+
+    CLI11_PARSE(cli, argc, argv);
+    
     try {
         sdlapp app;
         sdlwindow window(app, "Collision System", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        const int n = 100;
-
         collision_system cs(window.LoadTexture("textures\\circle.png"));
-        for (auto i = 0; i < n; i++) {
-            cs.add_particle(particle());
+
+        if (filename.empty()) {
+            std::cout << fmt::format("Generating {} random particles", n) << std::endl;
+            for (auto i = 0; i < n; i++) {
+                cs.add_particle(particle());
+            }
+        }
+        else {
+            std::cout << fmt::format("Parsing particles from file {}...", filename) << std::endl;
+            // TODO: implement parsing from file
+            throw std::runtime_error(fmt::format("Unable to parse particles from file {}! Cause: {}", filename, "not implemented"));
         }
         cs.predict_all();
 
@@ -41,7 +63,7 @@ int main(int argc, char* argv[])
             cs.move(dt);
             auto renderer = window.BeginRendering();
             cs.render(renderer);
-            std::cout << fmt::format("energy: {}", cs.energy()) << std::endl;
+            //std::cout << fmt::format("energy: {}", cs.energy()) << std::endl;
             ///
             window.EndRendering();
         }
