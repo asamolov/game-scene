@@ -18,6 +18,10 @@ int main(int argc, char* argv[])
     CLI::App cli{ "Collision System" };
     argv = cli.ensure_utf8(argv);
 
+    bool vsync = true;
+    cli.add_option("-v,--vsync", vsync, "enables or disables vsync")
+        ->capture_default_str();
+
     unsigned int n = 100;
     auto n_option = cli.add_option("-n,--number", n, "number of random particles to generate")
         ->check(CLI::Range(1U, 10000U))
@@ -32,7 +36,7 @@ int main(int argc, char* argv[])
     
     try {
         sdlapp app;
-        sdlwindow window(app, "Collision System", SCREEN_WIDTH, SCREEN_HEIGHT);
+        sdlwindow window(app, "Collision System", SCREEN_WIDTH, SCREEN_HEIGHT, vsync);
 
         collision_system cs(window.LoadTexture("textures\\circle.png"));
         if (filename.empty()) {
