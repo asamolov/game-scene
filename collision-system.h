@@ -44,11 +44,14 @@ struct collision_event {
 
 class collision_system {
 private:
+	const double compact_delta = 1.f; // compact every second
 	std::priority_queue<collision_event> pq;
 	std::vector<particle> particles;
 	sdltexture _circle;
 	double now = 0.f;
+	double next_compact = compact_delta;
 	void predict(size_t idx);
+	void compact();
 public:
 	collision_system(sdltexture&& circle);
 	void generate(const unsigned int n);

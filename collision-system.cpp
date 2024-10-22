@@ -12,6 +12,8 @@
 #include <filesystem>
 #include <fmt/format.h>
 #include <fmt/std.h>
+#include <fmt/chrono.h>
+#include <chrono>
 
 int main(int argc, char* argv[])
 {
@@ -209,6 +211,11 @@ void collision_system::move(double dt)
             break;
         }
     }
+
+    if (now > next_compact) {
+        compact();
+        next_compact = now + compact_delta;
+    }
 }
 
 void collision_system::render(SDL_Renderer* renderer)
@@ -225,4 +232,26 @@ double collision_system::energy() const
         e += p.energy();
     }
     return e;
+}
+
+void collision_system::compact()
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    // std PQ implementation does not allow access to underlying container. 
+    // Also, the heap function is private, so I cannot just extend and add compaction to that PQ.
+    // requires custom PQ implementation to allow in-place compaction without allocating a new vector
+    std::priority_queue<collision_event>::container_type tmp;
+    auto old_size = pq.size();
+    tmp.reserve(old_size);
+    while (!pq.empty()) {
+        auto& top = pq.top();
+        if (top.is_valid()) {
+            tmp.push_back(top);
+        }
+        pq.pop();
+    }
+    std::priority_queue<collision_event> new_pq(std::priority_queue<collision_event>::value_compare(), tmp);
+    pq.swap(new_pq);
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    std::cout << fmt::format("Compacted {}->{} in {}", old_size, pq.size(), std::chrono::duration_cast<std::chrono::milliseconds>(elapsed)) << std::endl;
 }
