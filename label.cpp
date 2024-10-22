@@ -21,7 +21,7 @@ void label::render(SDL_Renderer* renderer)
 		return;
 	}
 	// TODO: cache the texture if the text is not changed
-	SurfaceWrapper textSurface(TTF_RenderText_Solid(font, text.c_str(), SDL_Color{0x00, 0x00, 0x00}));
+	SurfaceWrapper textSurface(TTF_RenderText_Blended(font, text.c_str(), SDL_Color{ 0x00, 0x00, 0x00, 0x00 }));
 	TextureWrapper texture(SDL_CreateTextureFromSurface(renderer, textSurface.get()));
 	_rect.h = textSurface->h;
 	_rect.w = textSurface->w;
