@@ -103,7 +103,7 @@ void fpscounter::Render(SDL_Renderer* renderer)
 			fps = 0;
 		}
 		auto fpsLabel = fmt::format("FPS: {:3.2f}", fps);
-		label.text = fpsLabel;
+		label.set_text(fpsLabel);
 		Reset();
 	}
 	label.render(renderer);
