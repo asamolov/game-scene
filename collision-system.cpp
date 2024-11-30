@@ -29,9 +29,19 @@ int main(int argc, char* argv[])
         ->check(CLI::Range(1U, 10000U))
         ->capture_default_str();
 
+    float radius = 0.01f;
+    auto radius_option = cli.add_option("-r,--radius", radius, "radius of random particles, as fraction of screen size")
+        ->check(CLI::Range(0.0f, 0.1f))
+        ->capture_default_str();
+
+    float speed_factor = 0.5f;
+    auto speed_factor_option = cli.add_option("-s,--speed-factor", speed_factor, "max speed of random particles, as fraction of screen size")
+        ->check(CLI::Range(0.0f, 1.0f))
+        ->capture_default_str();
+
     std::filesystem::path filename;
     cli.add_option("-f,--file", filename, "file with particle system to load")
-        ->excludes(n_option)
+        ->excludes(n_option, radius_option, speed_factor_option)
         ->check(CLI::ExistingFile);
 
     CLI11_PARSE(cli, argc, argv);
@@ -42,8 +52,8 @@ int main(int argc, char* argv[])
 
         collision_system cs(window.LoadTexture("textures\\circle.png"));
         if (filename.empty()) {
-            std::cout << fmt::format("Generating {} random particles", n) << std::endl;
-            cs.generate(n);
+            std::cout << fmt::format("Generating {} random particles of radius {} and max speed {}", n, radius, speed_factor) << std::endl;
+            cs.generate(n, radius, speed_factor);
         } else {
             std::cout << fmt::format("Parsing particles from file {}...", filename) << std::endl;
             cs.load(filename);
@@ -102,8 +112,10 @@ collision_system::collision_system(sdltexture&& circle): _circle(std::move(circl
 {
 }
 
-void collision_system::generate(const unsigned int n)
+void collision_system::generate(const unsigned int n, const float radius, const float speed_factor)
 {
+    particle::setDefaultRadius(radius);
+    particle::setSpeedFactor(speed_factor);
     particles.clear();
     particles.resize(n); // generates N particles using default ctor
     predict_all();

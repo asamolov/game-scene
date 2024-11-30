@@ -10,15 +10,13 @@ double randf()
 	return std::rand() / static_cast<double>(RAND_MAX);
 }
 
-const double speed_factor = 0.5f;
-
 particle::particle()
 {
 	x = randf();
 	y = randf();
-	vx = (randf() - 0.5f) * speed_factor;
-	vy = (randf() - 0.5f) * speed_factor;
-	radius = 0.01f;
+	vx = (randf() - 0.5f) * s_speed_factor;
+	vy = (randf() - 0.5f) * s_speed_factor;
+	radius = s_default_radius;
 	mass = 1.f;
 	color = { 0,0,0,255 };
 	_collisions = 0;
@@ -61,9 +59,9 @@ void particle::render(SDL_Renderer* renderer, sdltexture& texture)
 const SDL_Color minC = { 0, 0, 255, 0 };
 const double minV = 0;
 const SDL_Color maxC = { 255, 0, 0, 0 };
-const double maxV = speed_factor;
 
 SDL_Color particle::color_of_speed() const {
+	double maxV = particle::s_speed_factor;
 	double ratio = (std::clamp(std::sqrt(vx * vx + vy * vy), minV, maxV) - minV) / (maxV - minV);
 	return {
 		static_cast<Uint8> (minC.r * (1 - ratio) + maxC.r * ratio),
@@ -166,5 +164,15 @@ size_t particle::collisions() const
 double particle::energy() const
 {
 	return 0.5 * mass * (vx * vx + vy * vy);
+}
+
+void particle::setDefaultRadius(float radius)
+{
+	particle::s_default_radius = radius;
+}
+
+void particle::setSpeedFactor(float speed_factor)
+{
+	s_speed_factor = speed_factor;
 }
 

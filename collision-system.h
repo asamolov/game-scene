@@ -54,7 +54,7 @@ private:
 	void compact();
 public:
 	collision_system(sdltexture&& circle);
-	void generate(const unsigned int n);
+	void generate(const unsigned int n, const float radius, const float speed_factor);
 	void load(const std::filesystem::path& filename);
 	void predict_all();
 	void add_particle(particle&& p);
