@@ -19,7 +19,7 @@ If called with no arguments, it creates a system of 100 equal mass and size part
 When loaded from a file, you can set the mass, size, color and speed of each particle allowing to simulate e.g. various physical systems.
 See examples in [data](./data) folder.
 
-![particles](./img/particles.mp4)
+![particles](./img/particles.webp)
 
 ## Implementation
 
